@@ -1,0 +1,35 @@
+version: "3"
+services:
+  client:
+    build:
+      context: ./client
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+    volumes:
+      - ./client:/app/
+      - /app/node_modules
+  server:
+    build:
+      context: ./api
+    ports:
+      - "5001:5001"
+      - "9229:9229"
+    environment:
+      - API_PORT=5001
+      - DATABASE_URL=postgres://postgres:password@db:5432/postgres  
+    depends_on:
+      - db
+    volumes:
+      - ./api:/app
+      - /app/node_modules
+  db:
+    build:
+      context: ./db
+    volumes:
+      - db-volume:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+volumes:
+  db-volume:
